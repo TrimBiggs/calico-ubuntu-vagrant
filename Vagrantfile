@@ -65,7 +65,7 @@ Vagrant.configure(2) do |config|
       host.vm.network :private_network, ip: ip
 
       # download calico and preload the docker images.
-      host.vm.provision :shell, inline: "wget -q https://circle-artifacts.com/gh/Metaswitch/calico-docker/896/artifacts/0/home/ubuntu/calico-docker/dist/calicoctl"
+      host.vm.provision :shell, inline: "wget -q https://circle-artifacts.com/gh/Metaswitch/calico-docker/962/artifacts/0/home/ubuntu/calico-docker/dist/calicoctl"
       host.vm.provision :shell, inline: "chmod +x calicoctl"
       host.vm.provision :shell, inline: "sudo modprobe ip6_tables"
       host.vm.provision :shell, inline: "sudo modprobe xt_set"
@@ -78,7 +78,8 @@ Vagrant.configure(2) do |config|
 
       # Replace docker with an unreleased version.
       filename = "docker"
-      host.vm.provision :shell, inline: "wget https://transfer.sh/XYIPl/#{filename} > /dev/null 2>&1"
+      host.vm.provision :shell, inline: "wget https://transfer.sh/iSKTe/#{filename}.tgz > /dev/null 2>&1"
+      host.vm.provision :shell, inline: "tar -zxvf #{filename}.tgz"
       # host.vm.provision :shell, inline: "wget https://master.dockerproject.org/linux/amd64/docker-1.7.0-dev > /dev/null"
       host.vm.provision :shell, inline: "chmod +x #{filename}"
       host.vm.provision :shell, inline: "sudo stop docker"
