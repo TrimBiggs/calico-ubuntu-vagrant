@@ -1,8 +1,8 @@
-# Calico Docker libnetwork prototype
+# Calico Docker libnetwork Ubuntu Vagrant example
 
-Calico provides IP connectivity between Docker containers on different hosts (as well as on the same host).
+This example shows how to network Docker containers using Calico with Docker's new [libnetwork network driver support](https://github.com/docker/libnetwork) that was introduced on the Docker [experimental channel](https://github.com/docker/docker/tree/master/experimental) alongside the Docker 1.7 release.  Docker's experimental channel is moving fast and some of its features are not yet fully stable.  For this reason this vagrant example currently uses a specific Docker experimental build with a specific build of Calico (rather than tracking master in both the [docker](https://github.com/docker/docker) and [calico-docker](https://github.com/Metaswitch/calico-docker) repos).
 
-This example shows Calico with Docker's new, [experimental network driver support](https://github.com/docker/libnetwork).  This is an early prototype and not considered stable.  For a more stable version of Calico's integration with Docker, see [the main project page](https://github.com/Metaswitch/calico-docker) for examples based on Powerstrip.
+For a more stable version of Calico's integration with Docker, see [the main project page](https://github.com/Metaswitch/calico-docker) for examples based on Powerstrip.
 
 ### A note about names & addresses
 In this example, we will use the following server names and IP addresses.
@@ -101,7 +101,7 @@ You should see output like this on each node
 
 ## Creating networked endpoints
 
-This pre-release version of Docker introduces a new flag to `docker run` to network containers:  `--publish-service <service>.<network>.<driver>`.
+The experimantal channel version of Docker introduces a new flag to `docker run` to network containers:  `--publish-service <service>.<network>.<driver>`.
 
  * `<service>` is the name by which you want the container to be known on the network.
  * `<network>` is the name of the network to join.  Containers on different networks cannot communicate.
@@ -120,28 +120,40 @@ On ubuntu-1
     docker run --publish-service srvD.net3.calico --name workload-D -tid busybox
     docker run --publish-service srvE.net1.calico --name workload-E -tid busybox
 
-Now, check that A can ping C and E. You can get a containers IP by running
+By default, networks are configured so that their members can communicate with one another, but workloads in other networks cannot reach them.  A, C and E are all in the same network so should be able to ping each other.  B and D are in their own networks so shouldn't be able to ping anyone else.
+
+You can find out a container's IP by running
 
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" <container name>
+
+On ubunto-0, find out the IP addresses of A, B and C.
+
+    docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-A
+    docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-B
+    docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-C
+    
+On ubunto-1, find out the IP addresses of D and E.
+
+    docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-D
+    docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-E
+    
+Now we know all the IP address, on ubuntu-0 check that A can ping C and E (substitute the IP addresses as required).
 
     docker exec workload-A ping -c 4 192.168.0.3
     docker exec workload-A ping -c 4 192.168.0.5
 
-Also check that A cannot ping B or D:
+Also check that A cannot ping B or D (substitute the IP addresses as required).
 
     docker exec workload-A ping -c 4 192.168.0.2
     docker exec workload-A ping -c 4 192.168.0.4
 
-By default, networks are configured so that their members can communicate with one another, but workloads in other networks cannot reach them.  B and D are in their own networks so shouldn't be able to ping anyone else.
+Libnetwork also supports using published service names.  However, note that in the current build of libnetwork these are not yet reliable in multi-host deployments.  On ubuntu-0 try
 
-You list the networks using
+    docker exec workload-A ping -c srvC
+
+To see the list of networks use
 
     docker network ls
-
-Finally, to clean everything up (without doing a `vagrant destroy`), you can run
-
-    sudo ./calicoctl reset
-
 
 [calico-ubuntu-vagrant]: https://github.com/Metaswitch/calico-ubuntu-vagrant-example
 [virtualbox]: https://www.virtualbox.org/
