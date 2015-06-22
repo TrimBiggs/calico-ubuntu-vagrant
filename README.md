@@ -126,13 +126,13 @@ You can find out a container's IP by running
 
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" <container name>
 
-On ubunto-0, find out the IP addresses of A, B and C.
+On ubuntu-0, find out the IP addresses of A, B and C.
 
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-A
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-B
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-C
     
-On ubunto-1, find out the IP addresses of D and E.
+On ubuntu-1, find out the IP addresses of D and E.
 
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-D
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-E
@@ -151,7 +151,7 @@ Libnetwork also supports using published service names.  However, note that in t
 
     docker exec workload-A ping -c srvC
 
-To see the list of networks use
+To see the list of networks, use
 
     docker network ls
 
