@@ -137,7 +137,7 @@ On ubuntu-1, find out the IP addresses of D and E.
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-D
     docker inspect --format "{{ .NetworkSettings.IPAddress }}" workload-E
     
-Now we know all the IP address, on ubuntu-0 check that A can ping C and E (substitute the IP addresses as required).
+Now we know all the IP addresses, on ubuntu-0 check that A can ping C and E (substitute the IP addresses as required).
 
     docker exec workload-A ping -c 4 192.168.0.3
     docker exec workload-A ping -c 4 192.168.0.5
@@ -149,7 +149,7 @@ Also check that A cannot ping B or D (substitute the IP addresses as required).
 
 Libnetwork also supports using published service names.  However, note that in the current build of libnetwork these are not yet reliable in multi-host deployments.  On ubuntu-0 try
 
-    docker exec workload-A ping -c srvC
+    docker exec workload-A ping -c 4 srvC
 
 To see the list of networks, use
 
