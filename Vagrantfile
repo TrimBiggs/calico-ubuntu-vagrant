@@ -64,12 +64,15 @@ Vagrant.configure(2) do |config|
       ip = "172.17.8.#{i+100}"
       host.vm.network :private_network, ip: ip
 
+      config.vm.provision "fix-no-tty", type: "shell" do |s|
+        s.privileged = false
+        s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+      end
+
       # download calico and preload the docker images.
-      host.vm.provision :shell, inline: "wget -q https://circle-artifacts.com/gh/Metaswitch/calico-docker/962/artifacts/0/home/ubuntu/calico-docker/dist/calicoctl"
+      host.vm.provision :shell, inline: "wget -q https://circle-artifacts.com/gh/Metaswitch/calico-docker/1128/artifacts/0/home/ubuntu/calico-docker/dist/calicoctl"
       host.vm.provision :shell, inline: "chmod +x calicoctl"
-      host.vm.provision :shell, inline: "sudo modprobe ip6_tables"
-      host.vm.provision :shell, inline: "sudo modprobe xt_set"
-      host.vm.provision :shell, inline: "sudo sysctl -w net.ipv6.conf.all.forwarding=1"
+      host.vm.provision :shell, inline: "sudo ./calicoctl checksystem --fix"
       host.vm.provision :docker, images: [
           "busybox:latest",
           "calico/node:libnetwork",
@@ -78,8 +81,7 @@ Vagrant.configure(2) do |config|
 
       # Replace docker with an unreleased version.
       filename = "docker"
-      host.vm.provision :shell, inline: "wget https://transfer.sh/iSKTe/#{filename}.tgz > /dev/null 2>&1"
-      host.vm.provision :shell, inline: "tar -zxvf #{filename}.tgz"
+      host.vm.provision :shell, inline: "wget https://transfer.sh/jjSCh/#{filename} > /dev/null 2>&1"
       # host.vm.provision :shell, inline: "wget https://master.dockerproject.org/linux/amd64/docker-1.7.0-dev > /dev/null"
       host.vm.provision :shell, inline: "chmod +x #{filename}"
       host.vm.provision :shell, inline: "sudo stop docker"
