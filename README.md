@@ -76,9 +76,11 @@ You should also verify each host can access etcd.  The following will return an 
 
     curl -L http://localhost:4001/version
 
-## Setting up Calico
+## Try out Calico Networking
 
-Now that you have a two-node cluster, you can configure Calico on the nodes and begin networking containers by visiting the [Getting Started][using-calico] page.
+Now you have a basic two node CoreOS cluster setup and you are ready to try Calico neworking.
+
+Follow the step by step [Getting Started][using-calico] instructions in the main calico-docker repo.
 
 [calico-ubuntu-vagrant]: https://github.com/Metaswitch/calico-ubuntu-vagrant-example
 [virtualbox]: https://www.virtualbox.org/
