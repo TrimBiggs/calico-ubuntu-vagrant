@@ -9,8 +9,8 @@ In this example, we will use the following server names and IP addresses.
 
 | hostname  | IP address   |
 |-----------|--------------|
-| ubuntu-0  | 172.17.8.100 |
 | ubuntu-1  | 172.17.8.101 |
+| ubuntu-2  | 172.17.8.102 |
 
 ## Set up your cluster
 
@@ -58,17 +58,17 @@ To connect to your servers
 
 4) Verify environment
 
-You should now have two Ubuntu servers, each running etcd in a cluster. The servers are named ubuntu-0 and ubuntu-1.
+You should now have two Ubuntu servers, each running etcd in a cluster. The servers are named ubuntu-1 and ubuntu-2.
 
 At this point, it's worth checking that your servers can ping each other.
 
-From ubuntu-0
-
-    ping 172.17.8.101
-
 From ubuntu-1
 
-    ping 172.17.8.100
+    ping 172.17.8.102
+
+From ubuntu-2
+
+    ping 172.17.8.101
 
 If you see ping failures, the likely culprit is a problem with the VirtualBox network between the VMs.  You should check that each host is connected to the same virtual network adapter in VirtualBox and rebooting the host may also help.  Remember to shut down the VMs with `vagrant halt` before you reboot.
 

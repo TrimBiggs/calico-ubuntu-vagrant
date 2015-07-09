@@ -57,11 +57,11 @@ Vagrant.configure(2) do |config|
   # SHELL
 
   $num_instances.times do |i|
-    vm_name = [$instance_name_prefix, i].join("-")
+    vm_name = [$instance_name_prefix, (i+1)].join("-")
     config.vm.define vm_name do |host|
       host.vm.hostname = vm_name
 
-      ip = "172.17.8.#{i+100}"
+      ip = "172.17.8.#{i+101}"
       host.vm.network :private_network, ip: ip
 
       config.vm.provision "fix-no-tty", type: "shell" do |s|
@@ -94,12 +94,12 @@ Vagrant.configure(2) do |config|
           curl -L --silent https://dl.bintray.com/mitchellh/consul/0.5.2_linux_amd64.zip -o consul.zip
           unzip consul.zip
           chmod +x consul
-          nohup ./consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -client 172.17.8.100 > consul.log &
+          nohup ./consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -client 172.17.8.101 > consul.log &
         SHELL
       end
 
       # Set Docker to use consul for multihost.
-      host.vm.provision :shell, inline: %Q|echo 'DOCKER_OPTS="-r=true --kv-store=consul:172.17.8.100:8500"' >> dockerdefault|
+      host.vm.provision :shell, inline: %Q|echo 'DOCKER_OPTS="-r=true --kv-store=consul:172.17.8.101:8500"' >> dockerdefault|
       host.vm.provision :shell, inline: "sudo cp dockerdefault /etc/default/docker"
 
       # Start docker back up.
@@ -114,7 +114,7 @@ Vagrant.configure(2) do |config|
            "--initial-advertise-peer-urls http://#{ip}:7001 "\
            "--listen-peer-urls http://0.0.0.0:7001 "\
            "--initial-cluster-token etcd-cluster-2 "\
-           "--initial-cluster calico0=http://172.17.8.100:7001,calico1=http://172.17.8.101:7001 "\
+           "--initial-cluster calico0=http://172.17.8.101:7001,calico1=http://172.17.8.102:7001 "\
            "--initial-cluster-state new"
       end
     end
