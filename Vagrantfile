@@ -70,19 +70,19 @@ Vagrant.configure(2) do |config|
       end
 
       # download calico and preload the docker images.
-      host.vm.provision :shell, inline: "wget -q https://circle-artifacts.com/gh/Metaswitch/calico-docker/1128/artifacts/0/home/ubuntu/calico-docker/dist/calicoctl"
+      host.vm.provision :shell, inline: "wget -q https://github.com/Metaswitch/calico-docker/releases/download/v0.5.0/calicoctl"
       host.vm.provision :shell, inline: "chmod +x calicoctl"
-      host.vm.provision :shell, inline: "sudo ./calicoctl checksystem --fix"
       host.vm.provision :docker, images: [
           "busybox:latest",
-          "calico/node:libnetwork",
+          "calico/node:v0.5.0",
           "quay.io/coreos/etcd:v2.0.11",
       ]
+      host.vm.provision :shell, inline: "sudo ./calicoctl checksystem --fix"
 
       # Replace docker with an unreleased version.
-      filename = "docker"
-      host.vm.provision :shell, inline: "wget https://transfer.sh/jjSCh/#{filename} > /dev/null 2>&1"
-      # host.vm.provision :shell, inline: "wget https://master.dockerproject.org/linux/amd64/docker-1.7.0-dev > /dev/null"
+      filename = "docker-1.8.0-dev"
+      host.vm.provision :shell, inline: "wget https://github.com/Metaswitch/calico-docker/releases/download/v0.5.0/#{filename}.gz > /dev/null 2>&1"
+      host.vm.provision :shell, inline: "gunzip -c #{filename}.gz > #{filename}"
       host.vm.provision :shell, inline: "chmod +x #{filename}"
       host.vm.provision :shell, inline: "sudo stop docker"
       host.vm.provision :shell, inline: "sudo cp #{filename} $(which docker)"
